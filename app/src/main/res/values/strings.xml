@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ChattyChat</string>
+    <string name="startactivty">C\'est Start Activite!</string>
+    <string name="mainactivty">C\'est Main Activite!</string>
+</resources>
