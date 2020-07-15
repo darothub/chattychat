@@ -2,4 +2,11 @@
     <string name="app_name">ChattyChat</string>
     <string name="startactivty">C\'est Start Activite!</string>
     <string name="mainactivty">C\'est Main Activite!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="register">Register</string>
+    <string name="sign_in">Login</string>
+    <string name="create_an_account">Create new account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>
