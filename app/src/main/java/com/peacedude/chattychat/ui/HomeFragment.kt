@@ -43,6 +43,9 @@ class HomeFragment : Fragment() {
         registerBtn.setOnClickListener {
             findNavController().navigate(R.id.registerFragment)
         }
+        signinBtn.setOnClickListener {
+            findNavController().navigate(R.id.loginFragment)
+        }
     }
 
 

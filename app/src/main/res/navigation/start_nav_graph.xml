@@ -8,11 +8,16 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.peacedude.chattychat.ui.HomeFragment"
-        android:label="fragment_home"
+        android:label="  "
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.peacedude.chattychat.ui.RegisterFragment"
-        android:label="fragment_register"
+        android:label=" "
         tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.peacedude.chattychat.ui.LoginFragment"
+        android:label=" "
+        tools:layout="@layout/fragment_login" />
 </navigation>

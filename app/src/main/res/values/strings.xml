@@ -12,4 +12,6 @@
     <string name="logout">Log out</string>
     <string name="account_setting">Account setting</string>
     <string name="login">Login</string>
+    <string name="create_account">Create account</string>
+    <string name="chatty_chat">Chatty Chat</string>
 </resources>
