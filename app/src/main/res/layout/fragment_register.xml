@@ -31,6 +31,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp">
         <EditText
+            android:id="@+id/email_edittext"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:importantForAutofill="no"
@@ -48,6 +49,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp">
         <EditText
+            android:id="@+id/password_edittext"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:importantForAutofill="no"
@@ -62,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@id/textInputPassword"
         app:layout_constraintVertical_bias="0.09"
         app:layout_constraintBottom_toBottomOf="parent"
-        layout="@layout/reusable_button"
+        layout="@layout/reusables"
          />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

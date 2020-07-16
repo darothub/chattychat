@@ -23,12 +23,7 @@ private const val ARG_PARAM2 = "param2"
 class HomeFragment : Fragment() {
 
     lateinit var registerBtn:Button
-    val signinBtn:Button by lazy {
-        signin_btn.findViewById<Button>(R.id.btn)
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    lateinit var signinBtn:Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,8 +36,9 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         registerBtn = register_btn.findViewById(R.id.btn)
-        registerBtn.setText("Register")
-        signinBtn.text = "Login"
+        signinBtn = signin_btn.findViewById<Button>(R.id.btn)
+        registerBtn.text = getString(R.string.register)
+        signinBtn.text = getString(R.string.login)
 
         registerBtn.setOnClickListener {
             findNavController().navigate(R.id.registerFragment)
