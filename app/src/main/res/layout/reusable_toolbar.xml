@@ -6,6 +6,7 @@
     android:background="@color/colorPrimary"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:menu="@menu/main_menu"
+    app:popupTheme="@style/MyPopupTheme"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 </androidx.appcompat.widget.Toolbar>
