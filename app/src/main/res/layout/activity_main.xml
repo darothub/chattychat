@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        android:id="@+id/main_appBar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toTopOf="parent">-->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/main_appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
-<!--        <include layout="@layout/reusable_toolbar"-->
-<!--                android:id="@+id/main_toolbar"/>-->
-<!--        -->
+        <include layout="@layout/reusable_toolbar"
+                android:id="@+id/main_toolbar"/>
 
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
+
+    </com.google.android.material.appbar.AppBarLayout>
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/main_tabLayout"
         android:layout_width="match_parent"

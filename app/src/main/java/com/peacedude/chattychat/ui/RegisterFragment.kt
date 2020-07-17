@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.peacedude.chattychat.R
 import com.peacedude.chattychat.extension.backgroundColor
 import com.peacedude.chattychat.extension.hide
@@ -37,6 +39,7 @@ class RegisterFragment : Fragment() {
     }
 
     lateinit var mAuth: FirebaseAuth
+    lateinit var mDatabase:DatabaseReference
     val TAG = "RegisterFragment"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,16 +55,18 @@ class RegisterFragment : Fragment() {
         mAuth = FirebaseAuth.getInstance()
 
 
+
         createAccountBtn.setOnClickListener {
+            val displayName = displayName_edittext.text.toString()
             val email = email_edittext.text.toString()
             val password = password_edittext.text.toString()
             progressBar.show()
             createAccountBtn.backgroundColor(R.color.colorWhite)
-            createAccount(email, password)
+            createAccount(email, password, displayName)
         }
     }
 
-    private fun createAccount(email: String, password: String) {
+    private fun createAccount(email: String, password: String, displayName:String) {
         try {
             mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(),
@@ -71,18 +76,34 @@ class RegisterFragment : Fragment() {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success")
                             val user = mAuth.currentUser
-                            Toast.makeText(
-                                requireContext(), "Successful",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            startActivity(Intent(requireContext(), MainActivity::class.java))
-                            requireActivity().finish()
+                            var userId = user?.uid
+                            mDatabase =  FirebaseDatabase.getInstance().getReference().child("Users").child(userId.toString())
+                            val userCredentials = HashMap<String, String>()
+                            userCredentials["name"] = displayName
+                            userCredentials["status"] = getString(R.string.hi_there)
+                            userCredentials["image"] = "default"
+                            userCredentials["thumb_nail"] = "default"
+                            mDatabase.setValue(userCredentials).addOnCompleteListener {t ->
+                                when{
+                                    t.isSuccessful ->{
+                                        Toast.makeText(
+                                            requireContext(), "Successful",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        startActivity(Intent(requireContext(), MainActivity::class.java))
+                                        requireActivity().finish()
+                                    }
+                                }
+                            }
+
                         } else {
                             progressBar.hide()
+                            createAccountBtn.backgroundColor(R.color.colorPrimary)
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.exception)
                             Toast.makeText(
-                                requireContext(), "Authentication failed.",
+                                requireContext(), "${task.exception?.message}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

@@ -27,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 //        setSupportActionBar(main_toolbar as Toolbar)
-        supportActionBar?.setTitle(R.string.app_name)
+//        supportActionBar?.setTitle(R.string.app_name)
+        (main_toolbar as Toolbar).setTitle(R.string.app_name)
 //        val colorDrawable = ColorDrawable(Color.parseColor("#B54747"))
 //        supportActionBar?.setBackgroundDrawable(colorDrawable)
         mAuth = FirebaseAuth.getInstance()
@@ -50,8 +51,18 @@ class MainActivity : AppCompatActivity() {
                 R.color.colorWhite
             )
         )
+        (main_toolbar as Toolbar).setOnMenuItemClickListener {item ->
+            when (item.itemId) {
+                R.id.logout -> {
+                    mAuth.signOut()
+                    sendToStartActivity()
+                    true
+                }
+                else -> false
+            }
+        }
 
-        setTextOnButton()
+        setTextOnButton("Chats")
         main_viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(
@@ -63,13 +74,13 @@ class MainActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 when(position){
                     0 -> {
-                        setTextOnButton()
+                        setTextOnButton("Chats")
                     }
                     1-> {
-                        nextBtn.setText("Friends")
+                        setTextOnButton("Friends")
                     }
                     2->{
-                        nextBtn.setText("Request")
+                        setTextOnButton("Requests")
                     }
                 }
             }
@@ -89,8 +100,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setTextOnButton() {
-        nextBtn.setText("Chats")
+    private fun setTextOnButton(string: String) {
+        nextBtn.setText(string)
     }
 
     private fun sendToStartActivity() {
@@ -98,21 +109,21 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        super.onOptionsItemSelected(item)
-        when (item.itemId) {
-            R.id.logout -> {
-                mAuth.signOut()
-                sendToStartActivity()
-            }
-        }
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        super.onCreateOptionsMenu(menu)
+//        menuInflater.inflate(R.menu.main_menu, menu)
+//        return true
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        super.onOptionsItemSelected(item)
+//        when (item.itemId) {
+//            R.id.logout -> {
+//                mAuth.signOut()
+//                sendToStartActivity()
+//            }
+//        }
+//        return true
+//    }
 }
 

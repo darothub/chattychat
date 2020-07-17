@@ -14,4 +14,6 @@
     <string name="login">Login</string>
     <string name="create_account">Create account</string>
     <string name="chatty_chat">Chatty Chat</string>
+    <string name="display_name">Display name</string>
+    <string name="hi_there">Hi there! I am using chatty chat</string>
 </resources>
