@@ -5,7 +5,7 @@
         android:title="@string/logout"
         app:showAsAction="withText"
         />
-    <item android:id="@+id/account"
+    <item android:id="@+id/account_setting"
         android:title="@string/account_setting"
         app:showAsAction="withText"
         />

@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.ChatFragment">
-
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/chat_title"
         android:layout_width="match_parent"
@@ -16,6 +14,7 @@
         android:textSize="18sp"
         android:text="Chat page" />
     <ImageView
+        android:id="@+id/chat_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/chat_title"

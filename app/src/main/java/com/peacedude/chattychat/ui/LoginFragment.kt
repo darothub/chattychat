@@ -11,10 +11,14 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.peacedude.chattychat.R
+import com.peacedude.chattychat.extension.SharedPref
 import com.peacedude.chattychat.extension.backgroundColor
 import com.peacedude.chattychat.extension.hide
 import com.peacedude.chattychat.extension.show
@@ -36,6 +40,15 @@ class LoginFragment : Fragment() {
         login_btn.findViewById(R.id.progress_bar) as ProgressBar
     }
     val TAG = "LoginFragment"
+    val masterKey by lazy {
+        MasterKey.Builder(requireContext(), MasterKey.DEFAULT_MASTER_KEY_ALIAS).
+        setKeyScheme(MasterKey.KeyScheme.AES256_GCM).
+        build()
+    }
+    val sharedPreferences by lazy {
+        SharedPref.sharedPref(requireContext(), masterKey)
+    }
+    private lateinit var mDatabase: DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,15 +84,36 @@ class LoginFragment : Fragment() {
                             Log.d(TAG, "signInWithEmail:success")
                             progressBar.hide()
                             val user = mAuth.currentUser
+                            var userId = user?.uid
                             Toast.makeText(
                                 requireContext(), "Successful",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            startActivity(Intent(requireContext(), MainActivity::class.java))
-                            requireActivity().finish()
+                            val editor = sharedPreferences.edit()
+                            mDatabase =  FirebaseDatabase.getInstance().getReference().child("Users")
+                            mDatabase.addValueEventListener(object : ValueEventListener{
+                                override fun onCancelled(error: DatabaseError) {}
+
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    val displayName =
+                                        snapshot.child(userId.toString()).child("name").value
+                                    val status = snapshot.child(userId.toString()).child("status").value
+                                    Log.i("LoginFragment", "$displayName")
+                                    editor.putString("name", displayName.toString())
+                                    editor.putString("status", status.toString())
+                                    editor.apply()
+                                    startActivity(Intent(requireContext(), MainActivity::class.java))
+                                    requireActivity().finish()
+                                }
+
+                            })
+
+
+
                         } else {
                             // If sign in fails, display a message to the user.
                             progressBar.hide()
+                            loginBtn.backgroundColor(R.color.colorPrimary)
                             Log.w(TAG, "signInWithEmail:failure", task.exception)
                             Toast.makeText(
                                 requireContext(), "Authentication failed.",

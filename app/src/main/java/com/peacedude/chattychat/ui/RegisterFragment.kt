@@ -2,6 +2,7 @@ package com.peacedude.chattychat.ui
 
 import android.R.attr.password
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,15 +13,16 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import androidx.security.crypto.MasterKeys
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.peacedude.chattychat.R
-import com.peacedude.chattychat.extension.backgroundColor
-import com.peacedude.chattychat.extension.hide
-import com.peacedude.chattychat.extension.show
+import com.peacedude.chattychat.extension.*
 import kotlinx.android.synthetic.main.fragment_register.*
 import java.lang.Exception
 
@@ -37,6 +39,17 @@ class RegisterFragment : Fragment() {
     val progressBar by lazy {
         create_an_account.findViewById(R.id.progress_bar) as ProgressBar
     }
+
+
+    val masterKey by lazy {
+        MasterKey.Builder(requireContext(), MasterKey.DEFAULT_MASTER_KEY_ALIAS).
+        setKeyScheme(MasterKey.KeyScheme.AES256_GCM).
+        build()
+    }
+    val sharedPreferences by lazy {
+        SharedPref.sharedPref(requireContext(), masterKey)
+    }
+
 
     lateinit var mAuth: FirebaseAuth
     lateinit var mDatabase:DatabaseReference
@@ -56,15 +69,18 @@ class RegisterFragment : Fragment() {
 
 
 
+
         createAccountBtn.setOnClickListener {
             val displayName = displayName_edittext.text.toString()
             val email = email_edittext.text.toString()
             val password = password_edittext.text.toString()
             progressBar.show()
+            createAccountBtn.deactivate()
             createAccountBtn.backgroundColor(R.color.colorWhite)
             createAccount(email, password, displayName)
         }
     }
+
 
     private fun createAccount(email: String, password: String, displayName:String) {
         try {
@@ -91,6 +107,11 @@ class RegisterFragment : Fragment() {
                                             Toast.LENGTH_SHORT
                                         ).show()
 
+                                        val editor = sharedPreferences.edit()
+
+                                        editor.putString("name", displayName)
+                                        editor.putString("status", getString(R.string.hi_there))
+                                        editor.apply()
                                         startActivity(Intent(requireContext(), MainActivity::class.java))
                                         requireActivity().finish()
                                     }
@@ -99,6 +120,7 @@ class RegisterFragment : Fragment() {
 
                         } else {
                             progressBar.hide()
+                            createAccountBtn.activate()
                             createAccountBtn.backgroundColor(R.color.colorPrimary)
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -113,6 +135,7 @@ class RegisterFragment : Fragment() {
         }
         catch (e:Exception){
             progressBar.hide()
+            createAccountBtn.activate()
             createAccountBtn.backgroundColor(R.color.colorPrimary)
 
             Toast.makeText(

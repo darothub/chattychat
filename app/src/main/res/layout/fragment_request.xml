@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.RequestFragment">
-
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/req_title"
         android:layout_width="match_parent"

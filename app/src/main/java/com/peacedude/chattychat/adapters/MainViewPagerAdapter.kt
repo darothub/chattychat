@@ -19,13 +19,13 @@ class MainViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAV
         return 3
     }
 
-//    override fun getPageTitle(position: Int): CharSequence? {
-//        super.getPageTitle(position)
-//        return when(position){
-//            0 -> "REQUESTS"
-//            1 -> "CHATS"
-//            2 -> "FRIENDS"
-//            else -> "NULL"
-//        }
-//    }
+    override fun getPageTitle(position: Int): CharSequence? {
+        super.getPageTitle(position)
+        return when(position){
+            0 -> "REQUESTS"
+            1 -> "CHATS"
+            2 -> "FRIENDS"
+            else -> "NULL"
+        }
+    }
 }

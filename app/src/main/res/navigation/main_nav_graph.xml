@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.peacedude.chattychat.ui.FriendsFragment"
+        android:label="fragment_friends"
+        tools:layout="@layout/fragment_friends" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.peacedude.chattychat.ui.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/requestFragment"
+        android:name="com.peacedude.chattychat.ui.RequestFragment"
+        android:label="fragment_request"
+        tools:layout="@layout/fragment_request" />
+    <fragment
+        android:id="@+id/accountSettingFragment"
+        android:name="com.peacedude.chattychat.ui.AccountSettingFragment"
+        android:label=" "
+        tools:layout="@layout/fragment_account_setting" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.peacedude.chattychat.ui.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" />
+</navigation>
