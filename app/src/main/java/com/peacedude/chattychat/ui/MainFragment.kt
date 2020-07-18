@@ -36,6 +36,7 @@ class MainFragment : Fragment() {
     val sharedPreferences by lazy {
         SharedPref.sharedPref(requireContext(), masterKey)
     }
+    lateinit var adapter : MainViewPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +62,7 @@ class MainFragment : Fragment() {
         if (currentUser == null) {
             sendToStartActivity()
         }
-        val adapter = MainViewPagerAdapter(requireActivity().supportFragmentManager)
+        adapter = MainViewPagerAdapter(requireActivity().supportFragmentManager)
         main_viewPager.adapter = adapter
         main_tabLayout.setupWithViewPager(main_viewPager)
         main_tabLayout.setSelectedTabIndicatorColor(
@@ -144,6 +145,7 @@ class MainFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+
         Log.i(TAG, "onPause")
 
     }

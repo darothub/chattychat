@@ -18,5 +18,5 @@
     <string name="hi_there">Hi there! I am using chatty chat</string>
     <string name="dash">---------</string>
     <string name="change_picture">Change profile picture</string>
-    <string name="edit_profile">Edit profile info</string>
+    <string name="edit_status">Edit status</string>
 </resources>
