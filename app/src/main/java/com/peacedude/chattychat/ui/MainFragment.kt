@@ -14,10 +14,14 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import androidx.viewpager.widget.ViewPager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.peacedude.chattychat.R
 import com.peacedude.chattychat.adapters.MainViewPagerAdapter
 import com.peacedude.chattychat.extension.SharedPref
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 
 /**
@@ -26,7 +30,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
  * create an instance of this fragment.
  */
 class MainFragment : Fragment() {
-    val TAG = "MainFragment"
+    private val TAG = "MainFragment"
     lateinit var mAuth: FirebaseAuth
     val masterKey by lazy {
         MasterKey.Builder(requireContext(), MasterKey.DEFAULT_MASTER_KEY_ALIAS).
@@ -37,7 +41,11 @@ class MainFragment : Fragment() {
         SharedPref.sharedPref(requireContext(), masterKey)
     }
     lateinit var adapter : MainViewPagerAdapter
-
+    lateinit var valueListener:ValueEventListener
+    private lateinit var mDatabase: DatabaseReference
+    private val currentUser by lazy {
+        mAuth.currentUser
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -56,12 +64,33 @@ class MainFragment : Fragment() {
         mAuth = FirebaseAuth.getInstance()
 
 
-
-        var currentUser = mAuth.currentUser
-
         if (currentUser == null) {
             sendToStartActivity()
         }
+
+
+        mDatabase =  FirebaseDatabase.getInstance().getReference()
+        val userId = currentUser?.uid
+
+        val editor = sharedPreferences.edit()
+
+        valueListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {}
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val tableNameRef = snapshot.child("Users")
+                val displayName =
+                    tableNameRef.child(userId.toString()).child("name").value
+                val status = tableNameRef.child(userId.toString()).child("status").value
+                Log.i(TAG, displayName.toString())
+                (main_toolbar as Toolbar).title = displayName.toString().capitalize()
+                editor.putString("name", displayName.toString())
+                editor.putString("status", status.toString())
+                editor.apply()
+            }
+        }
+
+
         adapter = MainViewPagerAdapter(requireActivity().supportFragmentManager)
         main_viewPager.adapter = adapter
         main_tabLayout.setupWithViewPager(main_viewPager)
@@ -133,21 +162,20 @@ class MainFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.i(TAG, "onStart")
-        val name = sharedPreferences.getString("name", "No name")
-        (main_toolbar as Toolbar).title = name?.capitalize()
-        Log.i("MainFragment", "$name")
     }
 
     override fun onResume() {
         super.onResume()
+
+        mDatabase.addValueEventListener(valueListener)
+
         Log.i(TAG, "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-
+        mDatabase.removeEventListener(valueListener)
         Log.i(TAG, "onPause")
-
     }
 
 }

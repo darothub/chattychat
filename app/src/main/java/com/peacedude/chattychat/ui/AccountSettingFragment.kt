@@ -25,6 +25,9 @@ import com.peacedude.chattychat.extension.hide
 import com.peacedude.chattychat.extension.show
 import kotlinx.android.synthetic.main.fragment_account_setting.*
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 
 /**
@@ -35,14 +38,14 @@ import kotlinx.android.synthetic.main.fragment_login.*
 class AccountSettingFragment : Fragment() {
     val TAG = "AccountSetting"
 
-    lateinit var changePictureButton: Button
+    private lateinit var changePictureButton: Button
     lateinit var changeStatusButton: Button
-    val masterKey by lazy {
+    private val masterKey by lazy {
         MasterKey.Builder(requireContext(), MasterKey.DEFAULT_MASTER_KEY_ALIAS).
         setKeyScheme(MasterKey.KeyScheme.AES256_GCM).
         build()
     }
-    val sharedPreferences by lazy {
+    private val sharedPreferences by lazy {
         SharedPref.sharedPref(requireContext(), masterKey)
     }
     lateinit var mAuth: FirebaseAuth
@@ -66,13 +69,13 @@ class AccountSettingFragment : Fragment() {
         changeStatusButton = edit_profile_btn.findViewById(R.id.btn)
         changePictureButton.text = getString(R.string.change_picture)
         changeStatusButton.text = getString(R.string.edit_status)
-
-
-
+        val userId = mAuth.currentUser?.uid
+        mDatabase =  FirebaseDatabase.getInstance().reference.child("Users").child(userId.toString())
 
         val name = sharedPreferences.getString("name", "No name")
         val status = sharedPreferences.getString("status", getString(R.string.hi_there))
         profile_display_name.text = name
+        profile_status.hint = status
         profile_status.setText(status.toString())
         (setting_toolbar as androidx.appcompat.widget.Toolbar).menu.clear()
         val navController = Navigation.findNavController((setting_toolbar as androidx.appcompat.widget.Toolbar))
@@ -89,30 +92,26 @@ class AccountSettingFragment : Fragment() {
         profile_status.setOnKeyListener { view, keycode, keyEvent ->
 
             val newStatus = profile_status.text.toString()
-            if(keyEvent.action == KeyEvent.ACTION_DOWN){
-                val userId = mAuth.currentUser?.uid
-                mDatabase =  FirebaseDatabase.getInstance().reference.child("Users").child(userId.toString())
-                when(keycode){
-                    KEYCODE_ENTER -> {
-                        setting_progress_bar.show()
-                        profile_status.hide()
-                        mDatabase.child("status").setValue(newStatus).addOnCompleteListener {task ->
-                            when{
-                                task.isSuccessful->{
-                                    val sharedPrefEditor = sharedPreferences.edit()
-                                    sharedPrefEditor.putString("status", newStatus)
-                                    sharedPrefEditor.apply()
-                                    setting_progress_bar.hide()
-                                    profile_status.hint = newStatus
-                                    profile_status.show()
-                                    profile_status.isEnabled = false
-                                    Toast.makeText(requireContext(), "new status set successfully to $newStatus", Toast.LENGTH_LONG).show()
-                                }
-                            }
+            if(keyEvent.action == KeyEvent.ACTION_DOWN && keycode == KEYCODE_ENTER){
+                setting_progress_bar.show()
+                profile_status.hide()
+                mDatabase.child("status").setValue(newStatus).addOnCompleteListener {task ->
+                    when {
+                        task.isSuccessful -> {
+                            findNavController().navigate(R.id.accountSettingFragment)
+                            val sharedPrefEditor = sharedPreferences.edit()
+                            sharedPrefEditor.putString("status", newStatus)
+                            sharedPrefEditor.apply()
+                            setting_progress_bar.hide()
+                            profile_status.show()
+                            profile_status.isEnabled = false
+                            Toast.makeText(requireContext(), "new status set successfully to $newStatus", Toast.LENGTH_LONG).show()
                         }
-
                     }
+
                 }
+
+
 
             }
             true

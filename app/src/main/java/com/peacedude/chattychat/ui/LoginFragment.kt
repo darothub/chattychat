@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
     private val progressBar by lazy {
         login_btn.findViewById(R.id.progress_bar) as ProgressBar
     }
-    val TAG = "LoginFragment"
+    private val TAG = "LoginFragment"
     val masterKey by lazy {
         MasterKey.Builder(requireContext(), MasterKey.DEFAULT_MASTER_KEY_ALIAS).
         setKeyScheme(MasterKey.KeyScheme.AES256_GCM).
@@ -83,32 +83,18 @@ class LoginFragment : Fragment() {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success")
                             progressBar.hide()
+                            loginBtn.backgroundColor(R.color.colorPrimary)
+                            loginBtn.isEnabled = false
                             val user = mAuth.currentUser
-                            var userId = user?.uid
+
                             Toast.makeText(
                                 requireContext(), "Successful",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            val editor = sharedPreferences.edit()
-                            mDatabase =  FirebaseDatabase.getInstance().getReference().child("Users")
-                            mDatabase.addValueEventListener(object : ValueEventListener{
-                                override fun onCancelled(error: DatabaseError) {}
 
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    val displayName =
-                                        snapshot.child(userId.toString()).child("name").value
-                                    val status = snapshot.child(userId.toString()).child("status").value
-                                    Log.i("LoginFragment", "$displayName")
-                                    editor.putString("name", displayName.toString())
-                                    editor.putString("status", status.toString())
-                                    editor.apply()
-                                    startActivity(Intent(requireContext(), MainActivity::class.java))
-                                    requireActivity().finish()
-                                }
+                            mDatabase =  FirebaseDatabase.getInstance().reference.child("Users")
 
-                            })
-
-
+                            startActivity(Intent(this.activity, MainActivity::class.java))
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -120,8 +106,6 @@ class LoginFragment : Fragment() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-
-                        // ...
                     })
         }
         catch (e:Exception){
@@ -136,6 +120,24 @@ class LoginFragment : Fragment() {
 
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        this.onDestroy()
+        Log.i(TAG, "onPause")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG, "onDestroy")
+
+    }
+
 
 
 }
