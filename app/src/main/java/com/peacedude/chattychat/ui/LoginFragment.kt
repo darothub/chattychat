@@ -4,6 +4,7 @@ import android.R.attr
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ import com.peacedude.chattychat.extension.SharedPref
 import com.peacedude.chattychat.extension.backgroundColor
 import com.peacedude.chattychat.extension.hide
 import com.peacedude.chattychat.extension.show
+import com.peacedude.gdtoast.gdErrorToast
+import com.peacedude.gdtoast.gdToast
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_register.*
 import kotlinx.android.synthetic.main.reusables.*
@@ -87,10 +90,7 @@ class LoginFragment : Fragment() {
                             loginBtn.isEnabled = false
                             val user = mAuth.currentUser
 
-                            Toast.makeText(
-                                requireContext(), "Successful",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            requireActivity().gdToast("Successful", Gravity.BOTTOM)
 
                             mDatabase =  FirebaseDatabase.getInstance().reference.child("Users")
 
@@ -101,10 +101,8 @@ class LoginFragment : Fragment() {
                             progressBar.hide()
                             loginBtn.backgroundColor(R.color.colorPrimary)
                             Log.w(TAG, "signInWithEmail:failure", task.exception)
-                            Toast.makeText(
-                                requireContext(), "Authentication failed.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            requireActivity().gdErrorToast("Authentication failed.", Gravity.BOTTOM)
+
                         }
                     })
         }
@@ -112,10 +110,8 @@ class LoginFragment : Fragment() {
             progressBar.hide()
             loginBtn.backgroundColor(R.color.colorPrimary)
 
-            Toast.makeText(
-                requireContext(), e.message,
-                Toast.LENGTH_SHORT
-            ).show()
+            requireActivity().gdErrorToast(e.message.toString(), Gravity.BOTTOM)
+
         }
 
 

@@ -58,6 +58,7 @@ class MainFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Log.i(TAG, "onActivityCreated")
         super.onActivityCreated(savedInstanceState)
@@ -69,7 +70,25 @@ class MainFragment : Fragment() {
         }
 
 
-        mDatabase =  FirebaseDatabase.getInstance().getReference()
+
+        setupViewPager()
+        toolBarMenuListener()
+
+        setTextOnButton("Chats")
+        viewPagerPageListener()
+
+        nextBtn.setOnClickListener {
+            if(main_viewPager.currentItem +1 < adapter.count){
+                main_viewPager.currentItem = main_viewPager.currentItem+1
+            }
+            else{
+                main_viewPager.currentItem = 0
+            }
+        }
+    }
+
+    private fun retrievingDataFromFirebase() {
+        mDatabase = FirebaseDatabase.getInstance().getReference()
         val userId = currentUser?.uid
 
         val editor = sharedPreferences.edit()
@@ -90,7 +109,54 @@ class MainFragment : Fragment() {
             }
         }
 
+        mDatabase.addValueEventListener(valueListener)
+    }
 
+    private fun viewPagerPageListener() {
+        main_viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> {
+                        setTextOnButton("Chats")
+                    }
+                    1 -> {
+                        setTextOnButton("Friends")
+                    }
+                    2 -> {
+                        setTextOnButton("Requests")
+                    }
+                }
+            }
+
+        })
+    }
+
+    private fun toolBarMenuListener() {
+        (main_toolbar as Toolbar).setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.logout -> {
+                    mAuth.signOut()
+                    sendToStartActivity()
+                    true
+                }
+                R.id.account_setting -> {
+                    findNavController().navigate(R.id.accountSettingFragment)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun setupViewPager() {
         adapter = MainViewPagerAdapter(requireActivity().supportFragmentManager)
         main_viewPager.adapter = adapter
         main_tabLayout.setupWithViewPager(main_viewPager)
@@ -100,54 +166,6 @@ class MainFragment : Fragment() {
                 R.color.colorWhite
             )
         )
-        (main_toolbar as Toolbar).setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.logout -> {
-                    mAuth.signOut()
-                    sendToStartActivity()
-                    true
-                }
-                R.id.account_setting ->{
-                    findNavController().navigate(R.id.accountSettingFragment)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        setTextOnButton("Chats")
-        main_viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
-            override fun onPageScrollStateChanged(state: Int) {}
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {}
-
-            override fun onPageSelected(position: Int) {
-                when(position){
-                    0 -> {
-                        setTextOnButton("Chats")
-                    }
-                    1-> {
-                        setTextOnButton("Friends")
-                    }
-                    2->{
-                        setTextOnButton("Requests")
-                    }
-                }
-            }
-
-        })
-
-        nextBtn.setOnClickListener {
-            if(main_viewPager.currentItem +1 < adapter.count){
-                main_viewPager.currentItem = main_viewPager.currentItem+1
-            }
-            else{
-                main_viewPager.currentItem = 0
-            }
-        }
     }
 
     private fun setTextOnButton(string: String) {
@@ -161,13 +179,14 @@ class MainFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
         Log.i(TAG, "onStart")
     }
 
     override fun onResume() {
         super.onResume()
+        retrievingDataFromFirebase()
 
-        mDatabase.addValueEventListener(valueListener)
 
         Log.i(TAG, "onResume")
     }

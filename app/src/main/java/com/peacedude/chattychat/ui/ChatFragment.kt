@@ -36,14 +36,13 @@ class ChatFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.i(TAG, "onResume")
-        chat_logo.show()
 
     }
 
     override fun onPause() {
         super.onPause()
         Log.i(TAG, "onPause")
-//        requireActivity().recreate()
+
     }
 
 }
