@@ -1,9 +1,12 @@
 package com.peacedude.chattychat.ui
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import android.view.KeyEvent.KEYCODE_ENTER
@@ -28,6 +31,7 @@ import com.peacedude.gdtoast.gdToast
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_account_setting.*
+import java.io.ByteArrayOutputStream
 
 
 /**
@@ -118,13 +122,14 @@ class AccountSettingFragment : Fragment() {
         }
 
         changePictureButton.setOnClickListener {
-//            val galleryIntent = Intent()
-//            galleryIntent.type = "image/*"
-//            galleryIntent.action = Intent.ACTION_GET_CONTENT
-//
-//            startActivityForResult(Intent.createChooser(galleryIntent, "Choose a picture"), GALLERY_PHOTO_CODE)
-            CropImage.activity()
-                .start(requireContext(), this)
+            val galleryIntent = Intent()
+            galleryIntent.type = "image/*"
+            galleryIntent.action = Intent.ACTION_GET_CONTENT
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val chooser = Intent.createChooser(galleryIntent, "Photo options")
+            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(intent))
+            startActivityForResult(chooser, GALLERY_PHOTO_CODE)
+
         }
 
 
@@ -132,17 +137,17 @@ class AccountSettingFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-//        if(requestCode == GALLERY_PHOTO_CODE){
-//
-//            val imageUri = data?.data
-//            requireActivity().gdToast("Workings $imageUri", Gravity.BOTTOM)
-//            CropImage.activity(imageUri)
-//                .setAspectRatio(1, 1)
-//                .start(requireActivity())
-//        }
+        if(requestCode == GALLERY_PHOTO_CODE){
+            val imageUri = data?.data ?: getImageUriFromBitmap(requireContext(), data?.extras?.get("data") as Bitmap)
+            requireActivity().gdToast("Workings2 $imageUri", Gravity.BOTTOM)
+            CropImage.activity(imageUri)
+                .setAspectRatio(1, 1)
+                .start(requireContext(), this)
+        }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
+
             if (resultCode == RESULT_OK) {
                 val resultUri: Uri = result.uri
                 val filePath = profileImageRef.child("profile_images").child("profile_images1.jpg")
@@ -162,6 +167,12 @@ class AccountSettingFragment : Fragment() {
         }
     }
 
+    private fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri{
+        val bytes = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Title", null)
+        return Uri.parse(path.toString())
+    }
     override fun onPause() {
         super.onPause()
         Log.i(TAG, "onPause")
