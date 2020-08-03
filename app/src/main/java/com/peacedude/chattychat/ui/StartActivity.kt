@@ -15,9 +15,17 @@ class StartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_start)
         navController = Navigation.findNavController(this, R.id.fragment);
         NavigationUI.setupActionBarWithNavController(this, navController);
+
+        if(intent != null){
+            when(intent.extras?.get("finish")){
+                true ->finish()
+            }
+        }
     }
     override fun onSupportNavigateUp(): Boolean {
         return (Navigation.findNavController(this, R.id.fragment).navigateUp()
                 || super.onSupportNavigateUp())
     }
+
+
 }

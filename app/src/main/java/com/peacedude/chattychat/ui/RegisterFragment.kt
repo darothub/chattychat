@@ -97,7 +97,7 @@ class RegisterFragment : Fragment() {
                             val userCredentials = HashMap<String, String>()
                             userCredentials["name"] = displayName
                             userCredentials["status"] = getString(R.string.hi_there)
-                            userCredentials["image"] = "default"
+                            userCredentials["image"] = getString(R.string.defaultImageString)
                             userCredentials["thumb_nail"] = "default"
                             mDatabase.setValue(userCredentials).addOnCompleteListener {t ->
                                 when{

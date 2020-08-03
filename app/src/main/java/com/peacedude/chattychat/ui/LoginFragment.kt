@@ -95,6 +95,7 @@ class LoginFragment : Fragment() {
                             mDatabase =  FirebaseDatabase.getInstance().reference.child("Users")
 
                             startActivity(Intent(this.activity, MainActivity::class.java))
+                            requireActivity().finish()
 
                         } else {
                             // If sign in fails, display a message to the user.

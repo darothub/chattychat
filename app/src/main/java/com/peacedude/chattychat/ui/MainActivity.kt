@@ -18,6 +18,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import androidx.viewpager.widget.ViewPager
 import com.google.firebase.auth.FirebaseAuth
+import com.peacedude.chattychat.Algo
 import com.peacedude.chattychat.R
 import com.peacedude.chattychat.adapters.MainViewPagerAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -67,3 +68,11 @@ class MainActivity : AppCompatActivity() {
 //    }
 }
 
+fun main(){
+//    var a = Array(5){i -> (i*i).toString()}
+//    a.forEach { it -> println(it) }
+
+    var str = "lesson"
+    var result = Algo.shiftedDiff(" ", " ")
+    println(result)
+}

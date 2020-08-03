@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -68,9 +69,6 @@ class MainFragment : Fragment() {
         if (currentUser == null) {
             sendToStartActivity()
         }
-
-
-
         setupViewPager()
         toolBarMenuListener()
 
@@ -85,10 +83,17 @@ class MainFragment : Fragment() {
                 main_viewPager.currentItem = 0
             }
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback{
+//            val finishIntent = Intent(requireActivity(), StartActivity::class.java)
+//            finishIntent.putExtra("finish", true)
+//            startActivity(Intent(requireActivity(), StartActivity::class.java))
+            requireActivity().finish()
+        }
     }
 
     private fun retrievingDataFromFirebase() {
-        mDatabase = FirebaseDatabase.getInstance().getReference()
+        mDatabase = FirebaseDatabase.getInstance().reference
         val userId = currentUser?.uid
 
         val editor = sharedPreferences.edit()
@@ -101,10 +106,12 @@ class MainFragment : Fragment() {
                 val displayName =
                     tableNameRef.child(userId.toString()).child("name").value
                 val status = tableNameRef.child(userId.toString()).child("status").value
+                val imageString = tableNameRef.child(userId.toString()).child("image").value
                 Log.i(TAG, displayName.toString())
                 (main_toolbar as Toolbar).title = displayName.toString().capitalize()
                 editor.putString("name", displayName.toString())
                 editor.putString("status", status.toString())
+                editor.putString("image", imageString.toString())
                 editor.apply()
             }
         }
@@ -119,8 +126,7 @@ class MainFragment : Fragment() {
                 position: Int,
                 positionOffset: Float,
                 positionOffsetPixels: Int
-            ) {
-            }
+            ) {}
 
             override fun onPageSelected(position: Int) {
                 when (position) {
@@ -186,8 +192,6 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         retrievingDataFromFirebase()
-
-
         Log.i(TAG, "onResume")
     }
 
